@@ -1,12 +1,26 @@
 import { Stack, Typography, Slider, Box, IconButton } from '@mui/material';
 import { formatTime } from '../../utils/formatTime';
 import { PlayArrow, SkipNext, SkipPrevious, Pause } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const PlayerControls = ({ is_paused, duration, progress, player }) => {
 	const [currentProgress, setCurrentProgress] = useState(progress);
 	const skipStyle = { width: 28, height: 28 };
 	const playStyle = { width: 38, height: 38 };
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			if (!is_paused && player) {
+				setCurrentProgress((previousState) => previousState + 1);
+			}
+		}, 1000);
+		return () => clearInterval(intervalId);
+	}, [is_paused, player]);
+
+	useEffect(() => {
+		setCurrentProgress(progress);
+	}, [progress]);
+
 	return (
 		<Stack direction={'column'} spacing={2} justify="center" alignItems="center" sx={{ width: '100%' }}>
 			<Stack spacing={1} direction="row" justifyContent={'center'} alignItems="center" sx={{ width: '100%' }}>
@@ -42,7 +56,19 @@ const PlayerControls = ({ is_paused, duration, progress, player }) => {
 			</Stack>
 			<Stack spacing={2} direction="row" justifyContent={'center'} alignItems="center" sx={{ width: '75%' }}>
 				<Typography sx={{ color: 'text.secondary', fontSize: 12 }}>{formatTime(progress)}</Typography>
-				<Slider max={duration} value={currentProgress} min={0} size="medium" />
+				<Slider
+					max={duration}
+					value={currentProgress}
+					min={0}
+					size="medium"
+					onChange={(event, value) => {
+						console.log('Changed', value);
+						setCurrentProgress(value);
+					}}
+					onChangeCommitted={(event, value) => {
+						player.seek(value * 1000);
+					}}
+				/>
 				<Typography sx={{ color: 'text.secondary', fontSize: 12 }}>{formatTime(duration)}</Typography>
 			</Stack>
 		</Stack>
