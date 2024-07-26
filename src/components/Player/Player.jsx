@@ -137,13 +137,24 @@ const Player = ({ spotifyApi, token }) => {
 						<Box>Please transfer Playback</Box>
 					)}
 				</Grid>
-				<Grid xs={6} md={4} item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+				<Grid
+					xs={6}
+					md={4}
+					item
+					sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end' }}
+				>
 					<PlayerVolume player={localPlayer} />
 				</Grid>
 			</Grid>
 			<PlayerOverlay
 				playerOverlayIsOpen={playerOverlayIsOpen}
 				closeOverlay={() => setPlayerOverlayIsOpen(false)}
+				progress={progress}
+				is_paused={is_paused}
+				duration={duration}
+				player={localPlayer}
+				current_track={current_track}
+				active={active}
 			/>
 		</Box>
 	);
